@@ -63,8 +63,8 @@ int main() {
 	// int x = MIN(M,3);
 	// int y = MIN(N,3);
 	// printf("x = %d, y = %d\n", x, y);
-	print_mat(C, M, N, 3, 3);
-	print_mat(D, M, N, 3, 3);
+	// print_mat(C, M, N, 3, 3);
+	// print_mat(D, M, N, 3, 3);
 
 	cudaFree(dA);
 	cudaFree(dB);
