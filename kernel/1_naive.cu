@@ -5,12 +5,12 @@ __global__ void sgemm_naive(const float *A, const float *B,
 	int x =  blockIdx.x*blockDim.x + threadIdx.x;
 	int y =  blockIdx.y*blockDim.y + threadIdx.y;
 
-	if (x < M && y < N) {
+	if (x < N && y < M) {
 		float tmp = 0;
 		for (int i = 0; i < K; i++) {
-			tmp += A[x*K + i] * B[i*N + y];
+			tmp += A[y*K + i] * B[i*N + x];
 		}
-		C[x*N + y] = alpha*tmp + beta*C[x*N + y];
+		C[y*N + x] = alpha*tmp + beta*C[y*N + x];
 	}
 }
 

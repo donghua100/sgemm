@@ -122,7 +122,7 @@ void CudaDeviceInfo() {
 
 void testkernel_v1(float *A, float *B,  float *C, int M, int N, int K, float alpha, float beta) {
 	dim3 block(BLOCK_SIZE, BLOCK_SIZE);
-	dim3 grid(DIV_CEL(M,BLOCK_SIZE), DIV_CEL(N, BLOCK_SIZE));
+	dim3 grid(DIV_CEL(N,BLOCK_SIZE), DIV_CEL(M, BLOCK_SIZE));
 	sgemm_naive<<<grid,block>>>(A, B, C, M, N, K, alpha, beta);
 }
 
