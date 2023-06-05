@@ -41,7 +41,7 @@ int main() {
 
 	cudaEventRecord(start, 0);
 
-	testkernel(1, dA, dB, dC, M, N, K, alpha, beta);
+	testkernel(2, dA, dB, dC, M, N, K, alpha, beta);
 
 	cudaEventRecord(end, 0);
 	cudaEventSynchronize(end);

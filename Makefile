@@ -5,7 +5,7 @@ CUDA_LIB = $(CUDA_HOME)/lib64
 # INC_PATH = $(CUDA_HOME)/include
 
 # $(info $(CUDA_HOME) $(INC_PATH))
-INC_DIR = $(abspath ./include)
+INC_DIR = $(abspath ./include) $(abspath ./kernel)
 INC_PATH += $(INC_DIR) 
 SRCS = $(shell find $(abspath ./) -name "*.cu")
 BUILD_DIR = ./build
@@ -17,7 +17,8 @@ default: $(BINARY)
 all: default
 
 $(BINARY): $(SRCS)
-	$(NVCC) -I $(INC_PATH) $(SRCS) -o $(abspath $@)
+	 $(addprefix -LDFLAGS , $(LDFLAGS))
+	$(NVCC) $(addprefix -I , $(INC_PATH)) $(SRCS) -o $(abspath $@)
 
 run:$(BINARY)
 	@$^

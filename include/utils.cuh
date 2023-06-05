@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
-#include "kernels.cuh"
 
 #define MAX(a, b) (((a) > (b))?(a):(b))
 #define MIN(a, b) (((a) < (b))?(a):(b))
@@ -22,4 +21,5 @@ int init_cuda();
 void CudaDeviceInfo();
 
 void testkernel_v1(float *A, float *B, float *C, int M, int N, int K, float alpha, float beta);
+void testkernel_v2(float *A, float *B, float *C, int M, int N, int K, float alpha, float beta);
 void testkernel(int kernel_num, float *A, float *B, float *C, int M, int N, int K, float alpha, float beta);

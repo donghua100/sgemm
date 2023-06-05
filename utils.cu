@@ -1,5 +1,5 @@
 #include "utils.cuh"
-
+#include "kernels.cuh"
 
 void random_mat(float * A, int M, int N) {
 	srand(time(NULL));
@@ -126,12 +126,22 @@ void testkernel_v1(float *A, float *B,  float *C, int M, int N, int K, float alp
 	sgemm_naive<<<grid,block>>>(A, B, C, M, N, K, alpha, beta);
 }
 
+void testkernel_v2(float *A, float *B, float *C, int M, int N, int K, float alpha, float beta) {
+	dim3 block(BLOCK_SIZE, BLOCK_SIZE);
+	dim3 grid(DIV_CEL(N,BLOCK_SIZE), DIV_CEL(M, BLOCK_SIZE));
+	sgemm_global_mem_coalesce<BLOCK_SIZE> <<<grid, block>>>(A, B, C, M, N, K, alpha, beta);
+}
+
 void testkernel(int kernel_num, float *A, float *B, float *C, int M, int N, 
 		int K, float alpha, float beta) {
 	switch (kernel_num) {
 		case 1:
 			testkernel_v1(A, B, C, M, N, K, alpha, beta);
 			break;
+		case 2:
+			testkernel_v2(A, B, C, M, N, K, alpha, beta);
+			break;
+			
 		default:
 			break;
 
