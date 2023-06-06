@@ -15,8 +15,8 @@ int main() {
 
 	CudaDeviceInfo();
 
-	float *A, *B, *C, *dA, *dB, *dC, *D;
-	int M = 1000, N = 1000, K = 1000;
+	float *A, *B, *C, *D, *dA, *dB, *dC, *dD;
+	int M = 4096, N = 4096, K = 4096;
 	float alpha = 1.0, beta = 0.0;
 	A = (float *)malloc(sizeof(float)*M*K);
 	B = (float *)malloc(sizeof(float)*K*N);
@@ -30,10 +30,12 @@ int main() {
 	cudaMalloc((void **)&dA, sizeof(float)*M*K);
 	cudaMalloc((void **)&dB, sizeof(float)*K*N);
 	cudaMalloc((void **)&dC, sizeof(float)*M*N);
+	cudaMalloc((void **)&dD, sizeof(float)*M*N);
 
 	cudaMemcpy(dA, A, sizeof(float)*M*K, cudaMemcpyHostToDevice);
 	cudaMemcpy(dB, B, sizeof(float)*K*N, cudaMemcpyHostToDevice);
 	cudaMemcpy(dC, C, sizeof(float)*M*N, cudaMemcpyHostToDevice);
+	cudaMemcpy(dD, C, sizeof(float)*M*N, cudaMemcpyHostToDevice);
 
 	cudaEvent_t start, end;
 	cudaEventCreate(&start);
@@ -41,12 +43,12 @@ int main() {
 
 	cudaEventRecord(start, 0);
 
-	testkernel(2, dA, dB, dC, M, N, K, alpha, beta);
+	testkernel(1, dA, dB, dC, M, N, K, alpha, beta);
 
 	cudaEventRecord(end, 0);
 	cudaEventSynchronize(end);
 
-	cudaMemcpy(D, dC, sizeof(float)*M*N, cudaMemcpyDeviceToHost);
+	cudaMemcpy(C, dC, sizeof(float)*M*N, cudaMemcpyDeviceToHost);
 
 	float msec = 0;
 	cudaEventElapsedTime(&msec, start, end);
@@ -54,10 +56,26 @@ int main() {
 	printf("(GPU)Time used: %.4f sec(%.2lf GFLOPS)\n", sec,
 			2.0*M*K*N/(sec*1E9));
 
-	clock_t cpu_time = cpu_matmult(A, B, C, M, N, K, alpha, beta);
-	sec = cpu_time/(float)CLOCKS_PER_SEC;
-	printf("(CPU)Time used: %.4f sec(%.2lf GFLOPS)\n", sec,
+	cudaEventCreate(&start);
+	cudaEventCreate(&end);
+
+	cudaEventRecord(start, 0);
+	testkernel(2, dA, dB, dD, M, N, K, alpha, beta);
+
+	
+	cudaEventRecord(end, 0);
+	cudaEventSynchronize(end);
+
+	cudaMemcpy(D, dD, sizeof(float)*M*N, cudaMemcpyDeviceToHost);
+	msec = 0;
+	cudaEventElapsedTime(&msec, start, end);
+	sec = msec/1000;
+	printf("(GPU)Time used: %.4f sec(%.2lf GFLOPS)\n", sec,
 			2.0*M*K*N/(sec*1E9));
+	// clock_t cpu_time = cpu_matmult(A, B, C, M, N, K, alpha, beta);
+	// sec = cpu_time/(float)CLOCKS_PER_SEC;
+	// printf("(CPU)Time used: %.4f sec(%.2lf GFLOPS)\n", sec,
+	// 		2.0*M*K*N/(sec*1E9));
 
 	compare_mat(C, D, M, N);
 	// int x = MIN(M,3);
@@ -69,6 +87,7 @@ int main() {
 	cudaFree(dA);
 	cudaFree(dB);
 	cudaFree(dC);
+	cudaFree(dD);
 	cudaFree(start);
 	cudaFree(end);
 }
