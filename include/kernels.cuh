@@ -1,7 +1,7 @@
 #pragma once
 #include "1_naive.cuh"
 #include "2_global_mem_coalesce.cuh"
-
+#include "3_share_mem.cuh"
 
 
 // __global__ void sgemm_naive(const float *A, const float *B,

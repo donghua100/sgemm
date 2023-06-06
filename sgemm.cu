@@ -60,7 +60,7 @@ int main() {
 	cudaEventCreate(&end);
 
 	cudaEventRecord(start, 0);
-	testkernel(2, dA, dB, dD, M, N, K, alpha, beta);
+	testkernel(3, dA, dB, dD, M, N, K, alpha, beta);
 
 	
 	cudaEventRecord(end, 0);

@@ -132,6 +132,11 @@ void testkernel_v2(float *A, float *B, float *C, int M, int N, int K, float alph
 	sgemm_global_mem_coalesce<BLOCK_SIZE> <<<grid, block>>>(A, B, C, M, N, K, alpha, beta);
 }
 
+void testkernel_v3(float *A, float *B, float *C, int M, int N, int K, float alpha, float beta) {
+	dim3 block(BLOCK_SIZE * BLOCK_SIZE);
+	dim3 grid(DIV_CEL(N,BLOCK_SIZE), DIV_CEL(M, BLOCK_SIZE));
+	sgemm_shared_mem<BLOCK_SIZE> <<<grid, block>>>(A, B, C, M, N, K, alpha, beta);
+}
 void testkernel(int kernel_num, float *A, float *B, float *C, int M, int N, 
 		int K, float alpha, float beta) {
 	switch (kernel_num) {
@@ -140,6 +145,9 @@ void testkernel(int kernel_num, float *A, float *B, float *C, int M, int N,
 			break;
 		case 2:
 			testkernel_v2(A, B, C, M, N, K, alpha, beta);
+			break;
+		case 3:
+			testkernel_v3(A, B, C, M, N, K, alpha, beta);
 			break;
 			
 		default:
