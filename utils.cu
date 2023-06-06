@@ -127,7 +127,7 @@ void testkernel_v1(float *A, float *B,  float *C, int M, int N, int K, float alp
 }
 
 void testkernel_v2(float *A, float *B, float *C, int M, int N, int K, float alpha, float beta) {
-	dim3 block(BLOCK_SIZE, BLOCK_SIZE);
+	dim3 block(BLOCK_SIZE * BLOCK_SIZE);
 	dim3 grid(DIV_CEL(N,BLOCK_SIZE), DIV_CEL(M, BLOCK_SIZE));
 	sgemm_global_mem_coalesce<BLOCK_SIZE> <<<grid, block>>>(A, B, C, M, N, K, alpha, beta);
 }
